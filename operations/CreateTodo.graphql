@@ -1,5 +1,5 @@
-mutation createTodo($input: CreateTodoInput!) {
-  createTodo(input: $input) {
+mutation createTodo($input: CreateTodoInput!, $tenantId: String!) {
+  createTodo(input: $input, tenantId: $tenantId) {
     id
     status
     text

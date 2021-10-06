@@ -25,10 +25,16 @@ export function getSchema(dbConn: Connection) {
       t.nonNull.field("markTodoAsComplete", {
         type: Todo,
         args: {
+          tenantId: nonNull(stringArg()),
           id: nonNull(stringArg()),
         },
-        resolve: async (parent, { id }, ctx) => {
-          const todo = await todoRepository.findOne(id);
+        resolve: async (parent, { id, tenantId }, ctx) => {
+          const todo = await todoRepository.findOne({
+            where: {
+              id,
+              tenantId,
+            },
+          });
           if (!todo) {
             throw new UserInputError("Todo not found", {
               argumentName: "id",
@@ -42,29 +48,20 @@ export function getSchema(dbConn: Connection) {
       t.nonNull.field("createTodo", {
         type: Todo,
         args: {
+          tenantId: nonNull(stringArg()),
           input: arg({ type: nonNull(CreateTodoInput) }),
         },
-        resolve: async (parent, { input }, ctx) => {
+        resolve: async (parent, { input, tenantId }, ctx) => {
           const { title } = input;
           const todo = new appModels.Todo();
           todo.id = v4();
           todo.title = title;
           todo.completed = false;
+          todo.tenantId = tenantId;
           await todoRepository.save(todo);
           return mapTodo(todo);
         },
       });
-    },
-  });
-  const Post = objectType({
-    name: "Post",
-    description: "This is a description of a Post",
-    definition(t) {
-      t.nonNull.string("id");
-      t.nonNull.string("uuid");
-      t.nonNull.string("name");
-      t.nonNull.list.nonNull.list.nonNull.float("geo");
-      t.list.list.nonNull.float("messyGeo");
     },
   });
   const TodoStatus = enumType({
@@ -86,13 +83,17 @@ export function getSchema(dbConn: Connection) {
       t.list.field("todos", {
         type: Todo,
         args: {
+          tenantId: nonNull(stringArg()),
           offset: nonNull(intArg({ default: 0 })),
           limit: nonNull(intArg({ default: 20 })),
         },
-        resolve: async (root, { limit, offset }, ctx) => {
+        resolve: async (root, { limit, offset, tenantId }, ctx) => {
           const todos = await todoRepository.find({
             skip: offset,
             take: limit,
+            where: {
+              tenantId,
+            },
           });
           return todos.map(mapTodo);
         },

@@ -68,7 +68,7 @@ export type CreateApiKeyResponse = {
 export type CreateSessionInput = {
   cancelUrl: Scalars['String'];
   successUrl: Scalars['String'];
-  tier: Tier;
+  tier: Scalars['String'];
 };
 
 export type CreateSessionResponse = {
@@ -190,7 +190,6 @@ export type Mutation = {
   createTenant?: Maybe<TenantResponse>;
   createTodo: Todo;
   deleteTenantUser: DeleteTenantUserResponse;
-  getToken?: Maybe<Scalars['String']>;
   markTodoAsComplete: Todo;
   modifyTenantName: ModifyTenantNameResponse;
   modifyTenantUserRole: ModifyTenantUserRoleResponse;
@@ -234,6 +233,7 @@ export type MutationCreateTenantArgs = {
 
 export type MutationCreateTodoArgs = {
   input: CreateTodoInput;
+  tenantId: Scalars['String'];
 };
 
 
@@ -242,14 +242,9 @@ export type MutationDeleteTenantUserArgs = {
 };
 
 
-export type MutationGetTokenArgs = {
-  password: Scalars['String'];
-  username: Scalars['String'];
-};
-
-
 export type MutationMarkTodoAsCompleteArgs = {
   id: Scalars['String'];
+  tenantId: Scalars['String'];
 };
 
 
@@ -301,7 +296,7 @@ export type Plan = {
   isFree: Scalars['Boolean'];
   name: Scalars['String'];
   planId: Scalars['String'];
-  tier: Tier;
+  tier: Scalars['String'];
 };
 
 export type Query = {
@@ -344,6 +339,7 @@ export type QueryTenantArgs = {
 export type QueryTodosArgs = {
   limit?: Scalars['Int'];
   offset?: Scalars['Int'];
+  tenantId: Scalars['String'];
 };
 
 
@@ -404,7 +400,7 @@ export type StripeSubscription = {
   paymentMethod: StripePaymentMethod;
   planId: Scalars['String'];
   status: SubscriptionStatus;
-  tier: Tier;
+  tier: Scalars['String'];
   trialEnd?: Maybe<Scalars['Time']>;
   trialStart?: Maybe<Scalars['Time']>;
 };
@@ -469,13 +465,6 @@ export enum TenantUserType {
   Normal = 'NORMAL'
 }
 
-export enum Tier {
-  Enterprise = 'ENTERPRISE',
-  Freelancer = 'FREELANCER',
-  Hobby = 'HOBBY',
-  Startup = 'STARTUP'
-}
-
 /** This is a description of a Todo */
 export type Todo = {
   __typename?: 'Todo';
@@ -510,7 +499,7 @@ export type UpdateVatResponse = {
 };
 
 export type UpgradeSubscriptionInput = {
-  tier: Tier;
+  tier: Scalars['String'];
 };
 
 export type UpgradeSubscriptionResponse = {
@@ -681,7 +670,6 @@ export type ResolversTypes = {
   TenantResponse: ResolverTypeWrapper<TenantResponse>;
   TenantUser: ResolverTypeWrapper<TenantUser>;
   TenantUserType: TenantUserType;
-  Tier: Tier;
   Time: ResolverTypeWrapper<Scalars['Time']>;
   Todo: ResolverTypeWrapper<Todo>;
   TodoStatus: TodoStatus;
@@ -867,10 +855,9 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createCustomer?: Resolver<Maybe<ResolversTypes['CustomerResponse']>, ParentType, ContextType, RequireFields<MutationCreateCustomerArgs, 'email' | 'name' | 'tenantId'>>;
   createStripeSession?: Resolver<ResolversTypes['CreateSessionResponse'], ParentType, ContextType, RequireFields<MutationCreateStripeSessionArgs, 'input' | 'tenantId'>>;
   createTenant?: Resolver<Maybe<ResolversTypes['TenantResponse']>, ParentType, ContextType, RequireFields<MutationCreateTenantArgs, 'input'>>;
-  createTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationCreateTodoArgs, 'input'>>;
+  createTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationCreateTodoArgs, 'input' | 'tenantId'>>;
   deleteTenantUser?: Resolver<ResolversTypes['DeleteTenantUserResponse'], ParentType, ContextType, RequireFields<MutationDeleteTenantUserArgs, 'input'>>;
-  getToken?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationGetTokenArgs, 'password' | 'username'>>;
-  markTodoAsComplete?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationMarkTodoAsCompleteArgs, 'id'>>;
+  markTodoAsComplete?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationMarkTodoAsCompleteArgs, 'id' | 'tenantId'>>;
   modifyTenantName?: Resolver<ResolversTypes['ModifyTenantNameResponse'], ParentType, ContextType, RequireFields<MutationModifyTenantNameArgs, 'input'>>;
   modifyTenantUserRole?: Resolver<ResolversTypes['ModifyTenantUserRoleResponse'], ParentType, ContextType, RequireFields<MutationModifyTenantUserRoleArgs, 'input'>>;
   updateCustomer?: Resolver<Maybe<ResolversTypes['UpdateCustomerResponse']>, ParentType, ContextType, RequireFields<MutationUpdateCustomerArgs, 'input' | 'tenantId'>>;
@@ -888,7 +875,7 @@ export type PlanResolvers<ContextType = any, ParentType extends ResolversParentT
   isFree?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   planId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  tier?: Resolver<ResolversTypes['Tier'], ParentType, ContextType>;
+  tier?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -900,7 +887,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   plans?: Resolver<Maybe<Array<ResolversTypes['Plan']>>, ParentType, ContextType>;
   tenant?: Resolver<Maybe<ResolversTypes['Tenant']>, ParentType, ContextType, RequireFields<QueryTenantArgs, 'tenantId'>>;
   tenants?: Resolver<Maybe<Array<ResolversTypes['Tenant']>>, ParentType, ContextType>;
-  todos?: Resolver<Maybe<Array<Maybe<ResolversTypes['Todo']>>>, ParentType, ContextType, RequireFields<QueryTodosArgs, 'limit' | 'offset'>>;
+  todos?: Resolver<Maybe<Array<Maybe<ResolversTypes['Todo']>>>, ParentType, ContextType, RequireFields<QueryTodosArgs, 'limit' | 'offset' | 'tenantId'>>;
   usersByEmail?: Resolver<Maybe<Array<ResolversTypes['User']>>, ParentType, ContextType, RequireFields<QueryUsersByEmailArgs, 'email'>>;
 };
 
@@ -950,7 +937,7 @@ export type StripeSubscriptionResolvers<ContextType = any, ParentType extends Re
   paymentMethod?: Resolver<ResolversTypes['StripePaymentMethod'], ParentType, ContextType>;
   planId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['SubscriptionStatus'], ParentType, ContextType>;
-  tier?: Resolver<ResolversTypes['Tier'], ParentType, ContextType>;
+  tier?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trialEnd?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>;
   trialStart?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1072,6 +1059,7 @@ export type Resolvers<ContextType = any> = {
 
 export type CreateTodoMutationVariables = Exact<{
   input: CreateTodoInput;
+  tenantId: Scalars['String'];
 }>;
 
 
@@ -1080,11 +1068,12 @@ export type CreateTodoMutation = { __typename?: 'Mutation', createTodo: { __type
 export type GetPlansQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetPlansQuery = { __typename?: 'Query', plans?: Array<{ __typename?: 'Plan', description?: string | null | undefined, name: string, planId: string, amount: number, currency: string, isFree: boolean, tier: Tier, claims?: Array<{ __typename?: 'Claim', text: string }> | null | undefined }> | null | undefined };
+export type GetPlansQuery = { __typename?: 'Query', plans?: Array<{ __typename?: 'Plan', description?: string | null | undefined, name: string, planId: string, amount: number, currency: string, isFree: boolean, tier: string, claims?: Array<{ __typename?: 'Claim', text: string }> | null | undefined }> | null | undefined };
 
 export type GetTodosQueryVariables = Exact<{
   limit: Scalars['Int'];
   offset: Scalars['Int'];
+  tenantId: Scalars['String'];
 }>;
 
 
@@ -1092,15 +1081,16 @@ export type GetTodosQuery = { __typename?: 'Query', todos?: Array<{ __typename?:
 
 export type MarkTodoAsCompleteMutationVariables = Exact<{
   id: Scalars['String'];
+  tenantId: Scalars['String'];
 }>;
 
 
-export type MarkTodoAsCompleteMutation = { __typename?: 'Mutation', markTodoAsComplete: { __typename?: 'Todo', id: string, status: TodoStatus, text: string } };
+export type MarkTodoAsCompleteMutation = { __typename?: 'Mutation', markTodoAsComplete: { __typename?: 'Todo', id: string, text: string, status: TodoStatus } };
 
 
 export const CreateTodoDocument = gql`
-    mutation createTodo($input: CreateTodoInput!) {
-  createTodo(input: $input) {
+    mutation createTodo($input: CreateTodoInput!, $tenantId: String!) {
+  createTodo(input: $input, tenantId: $tenantId) {
     id
     status
     text
@@ -1123,6 +1113,7 @@ export type CreateTodoMutationFn = Apollo.MutationFunction<CreateTodoMutation, C
  * const [createTodoMutation, { data, loading, error }] = useCreateTodoMutation({
  *   variables: {
  *      input: // value for 'input'
+ *      tenantId: // value for 'tenantId'
  *   },
  * });
  */
@@ -1177,8 +1168,8 @@ export type GetPlansQueryHookResult = ReturnType<typeof useGetPlansQuery>;
 export type GetPlansLazyQueryHookResult = ReturnType<typeof useGetPlansLazyQuery>;
 export type GetPlansQueryResult = Apollo.QueryResult<GetPlansQuery, GetPlansQueryVariables>;
 export const GetTodosDocument = gql`
-    query getTodos($limit: Int!, $offset: Int!) {
-  todos(limit: $limit, offset: $offset) {
+    query getTodos($limit: Int!, $offset: Int!, $tenantId: String!) {
+  todos(limit: $limit, offset: $offset, tenantId: $tenantId) {
     id
     status
     text
@@ -1200,6 +1191,7 @@ export const GetTodosDocument = gql`
  *   variables: {
  *      limit: // value for 'limit'
  *      offset: // value for 'offset'
+ *      tenantId: // value for 'tenantId'
  *   },
  * });
  */
@@ -1215,11 +1207,11 @@ export type GetTodosQueryHookResult = ReturnType<typeof useGetTodosQuery>;
 export type GetTodosLazyQueryHookResult = ReturnType<typeof useGetTodosLazyQuery>;
 export type GetTodosQueryResult = Apollo.QueryResult<GetTodosQuery, GetTodosQueryVariables>;
 export const MarkTodoAsCompleteDocument = gql`
-    mutation markTodoAsComplete($id: String!) {
-  markTodoAsComplete(id: $id) {
+    mutation markTodoAsComplete($id: String!, $tenantId: String!) {
+  markTodoAsComplete(id: $id, tenantId: $tenantId) {
     id
-    status
     text
+    status
   }
 }
     `;
@@ -1239,6 +1231,7 @@ export type MarkTodoAsCompleteMutationFn = Apollo.MutationFunction<MarkTodoAsCom
  * const [markTodoAsCompleteMutation, { data, loading, error }] = useMarkTodoAsCompleteMutation({
  *   variables: {
  *      id: // value for 'id'
+ *      tenantId: // value for 'tenantId'
  *   },
  * });
  */

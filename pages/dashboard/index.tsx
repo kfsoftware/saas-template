@@ -1,12 +1,12 @@
-import { ApolloError } from '@apollo/client';
-import { AtSymbolIcon } from '@heroicons/react/outline';
-import { PageHeader } from '@kfsoftware/app';
-import { useTenant } from '@kfsoftware/common';
-import { useConfig } from '@kfsoftware/config';
-import { ModalForm, TextField } from '@kfsoftware/forms';
-import { EmptyState, Table } from '@kfsoftware/table';
-import Head from 'next/head';
-import React, { useEffect, useMemo, useState } from 'react';
+import { ApolloError } from "@apollo/client";
+import { AtSymbolIcon } from "@heroicons/react/outline";
+import { PageHeader } from "@kfsoftware/app";
+import { useTenant } from "@kfsoftware/common";
+import { useConfig } from "@kfsoftware/config";
+import { ModalForm, TextField } from "@kfsoftware/forms";
+import { EmptyState, Table } from "@kfsoftware/table";
+import Head from "next/head";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Column,
   TableOptions,
@@ -18,11 +18,15 @@ import {
   UseSortByColumnOptions,
   UseSortByState,
   useTable,
-} from 'react-table';
-import * as yup from 'yup';
+} from "react-table";
+import * as yup from "yup";
 
-import DashboardLayout from '../../components/DashboardLayout';
-import { Todo, useCreateTodoMutation, useGetTodosQuery } from '../../operations';
+import DashboardLayout from "../../components/DashboardLayout";
+import {
+  Todo,
+  useCreateTodoMutation,
+  useGetTodosQuery,
+} from "../../operations";
 
 interface AddTODOOverlayProps {
   open: boolean;
@@ -49,6 +53,7 @@ function AddTODOOverlay({ open, setOpen, onSave }: AddTODOOverlayProps) {
         try {
           await createTodo({
             variables: {
+              tenantId: current?.id!,
               input: {
                 title: values.title,
               },
@@ -96,6 +101,7 @@ export default function DashboardIndex() {
   const [pageSize, setPageSize] = useState(10);
   const { data, error, loading, refetch } = useGetTodosQuery({
     variables: {
+      tenantId: current?.id!,
       limit: 100,
       offset: 0,
     },

@@ -57,11 +57,13 @@ If you don't have an account, you can [sign up here](https://auth0.com/signup?pl
 
 You need an active account in auth0, create a tenant and download the CLI.
 After that you'll need to log in:
+
 ```bash
-auth0 login # press enter 
+auth0 login # press enter
 ```
 
 ## Install CLI
+
 The instructions to install and set up the Auth0 CLI can be found [on the auth0-cli documentation](https://github.com/auth0/auth0-cli#installation)
 
 Documentation about the CLI can be found [on this webpage from Auth0](https://auth0.github.io/auth0-cli/)
@@ -116,3 +118,17 @@ Then get the client id and client secret of the mgmt client, and replace the fol
 
 - AUTH0_CLIENT_ID
 - AUTH0_CLIENT_SECRET
+
+## Development
+
+### Start the server
+
+```bash
+yarn dev
+```
+
+### Transpile GraphQL queries to Typescript
+
+```bash
+yarn schema:w
+```

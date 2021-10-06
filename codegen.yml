@@ -1,5 +1,5 @@
 schema: 
-- ./schema.graphql
+- http://localhost:3000/api/graphql
 generates:
   ./operations/index.ts:
     documents:

@@ -8,4 +8,6 @@ export class Todo {
   title!: string;
   @Column()
   completed!: boolean;
+  @Column()
+  tenantId!: string;
 }

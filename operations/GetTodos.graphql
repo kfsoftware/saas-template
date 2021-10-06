@@ -1,5 +1,5 @@
-query getTodos($limit: Int!, $offset: Int!) {
-  todos(limit: $limit, offset: $offset) {
+query getTodos($limit: Int!, $offset: Int!, $tenantId: String!) {
+  todos(limit: $limit, offset: $offset, tenantId: $tenantId) {
     id
     status
     text

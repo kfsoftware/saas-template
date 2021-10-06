@@ -1,7 +1,7 @@
-mutation markTodoAsComplete($id: String!) {
-  markTodoAsComplete(id: $id) {
+mutation markTodoAsComplete($id: String!, $tenantId: String!) {
+  markTodoAsComplete(id: $id, tenantId: $tenantId) {
     id
-    status
     text
+    status
   }
 }
