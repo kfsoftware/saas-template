@@ -1,0 +1,7 @@
+query getTodos($limit: Int!, $offset: Int!) {
+  todos(limit: $limit, offset: $offset) {
+    id
+    status
+    text
+  }
+}

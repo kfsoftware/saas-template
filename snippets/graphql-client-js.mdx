@@ -1,0 +1,18 @@
+```js
+import ApolloClient, { gql } from "apollo-boost";
+
+import 'cross-fetch/polyfill';
+
+const client = new ApolloClient({
+  uri: "{{API_URL}}"
+});
+
+
+client.mutate({
+  mutation: gql`<YOUR GRAPHQL OPERATION>`,
+  variables: {
+    tenantId: "<XXXXX>"
+  }
+})
+  .then(result => console.log(result));
+```

@@ -1,0 +1,52 @@
+{
+  "_meta": {
+    "template_version": 0
+  },
+  "fixtures": [
+    {
+      "name": "free",
+      "path": "/v1/plans",
+      "method": "post",
+      "params": {
+        "product": {
+          "id": "free",
+          "name": "free"
+        },
+        "id": "free",
+        "amount": 999,
+        "currency": "usd",
+        "interval": "month"
+      }
+    },
+    {
+      "name": "startup",
+      "path": "/v1/plans",
+      "method": "post",
+      "params": {
+        "product": {
+          "id": "startup",
+          "name": "startup"
+        },
+        "id": "startup",
+        "amount": 2999,
+        "currency": "usd",
+        "interval": "month"
+      }
+    },
+    {
+      "name": "pro",
+      "path": "/v1/plans",
+      "method": "post",
+      "params": {
+        "product": {
+          "id": "pro",
+          "name": "pro"
+        },
+        "id": "pro",
+        "amount": 6999,
+        "currency": "usd",
+        "interval": "month"
+      }
+    }
+  ]
+}

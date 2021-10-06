@@ -1,0 +1,404 @@
+"""Exposes a URL that specifies the behaviour of this scalar."""
+directive @specifiedBy(
+  """The URL that specifies the behaviour of this scalar."""
+  url: String!
+) on SCALAR
+
+input AddTenantUserInput {
+  role: Role!
+  tenantId: String!
+  userId: String!
+}
+
+type AddTenantUserResponse {
+  errors: [Error!]
+}
+
+type Charge {
+  amount: Int!
+  amount_captured: Int!
+  amount_refunded: Int!
+  created: Int!
+  currency: String!
+  description: String!
+  id: String!
+}
+
+type Claim {
+  text: String!
+}
+
+enum Code {
+  ALREADY_EXISTS
+  NOT_FOUND
+  UNAUTHORIZED
+  UNKNOWN_ERROR
+  VALIDATION_ERROR
+}
+
+input CreateApiKeyInput {
+  role: Role!
+  tenantId: String!
+}
+
+type CreateApiKeyResponse {
+  errors: [Error!]
+  password: String!
+  tenantUser: TenantUser
+}
+
+input CreateSessionInput {
+  cancelUrl: String!
+  successUrl: String!
+  tier: Tier!
+}
+
+type CreateSessionResponse {
+  errors: [Error!]
+  id: String
+}
+
+input CreateTodoInput {
+  title: String!
+}
+
+type CustomerResponse {
+  customerId: String
+  errors: [Error!]
+}
+
+input DeleteTenantUserInput {
+  tenantId: String!
+  userId: String!
+}
+
+type DeleteTenantUserResponse {
+  errors: [Error!]
+}
+
+type Error {
+  code: Code!
+  message: String!
+}
+
+type Invoice {
+  account_country: String!
+  account_name: String!
+  amount_due: Int!
+  amount_paid: Int!
+  amount_remaining: Int!
+  application_fee_amount: Int!
+  attempt_count: Int!
+  attempted: Boolean!
+  auto_advance: Boolean!
+  billing_reason: String!
+  charge: Charge
+  collection_method: String!
+  created: Time!
+  currency: String!
+  customer: String!
+  customer_email: String!
+  customer_name: String
+  customer_phone: String
+  customer_shipping: String!
+  customer_tax_exempt: String!
+  default_payment_method: String!
+  default_source: String!
+  description: String!
+  due_date: Time
+  ending_balance: Int!
+  hosted_invoice_url: String!
+  id: String!
+  invoice_pdf: String!
+  lines: [InvoiceLine!]
+  livemode: Boolean!
+  next_payment_attempt: Time
+  paid: Boolean!
+  status: String!
+  subscription: String!
+  subtotal: Int!
+  tax: Int!
+  total: Int!
+}
+
+type InvoiceLine {
+  currency: String!
+  description: String!
+  id: String!
+  periodEnd: Time
+  periodStart: Time
+  quantity: Int!
+  unitPrice: Int!
+}
+
+input InvoicePaginationInput {
+  after: String
+  limit: Int! = 20
+}
+
+input ModifyTenantNameInput {
+  name: String!
+  tenantId: String!
+}
+
+type ModifyTenantNameResponse {
+  errors: [Error!]
+}
+
+input ModifyTenantUserRoleInput {
+  role: Role!
+  tenantId: String!
+  userId: String!
+}
+
+type ModifyTenantUserRoleResponse {
+  errors: [Error!]
+}
+
+type Mutation {
+  addTenantUser(input: AddTenantUserInput!): AddTenantUserResponse!
+  createApiKey(input: CreateApiKeyInput!): CreateApiKeyResponse!
+  createCustomer(email: String!, name: String!, tenantId: String!, vatType: VatType, vatValue: String): CustomerResponse
+  createStripeSession(input: CreateSessionInput!, tenantId: String!): CreateSessionResponse!
+  createTenant(input: TenantInput!): TenantResponse
+  createTodo(input: CreateTodoInput!): Todo!
+  deleteTenantUser(input: DeleteTenantUserInput!): DeleteTenantUserResponse!
+  getToken(password: String!, username: String!): String
+  markTodoAsComplete(id: String!): Todo!
+  modifyTenantName(input: ModifyTenantNameInput!): ModifyTenantNameResponse!
+  modifyTenantUserRole(input: ModifyTenantUserRoleInput!): ModifyTenantUserRoleResponse!
+  updateCustomer(input: UpdateCustomerInput!, tenantId: String!): UpdateCustomerResponse
+  updateCustomerEmail(email: String!, tenantId: String!): UpdateCustomerResponse
+  updateCustomerName(name: String!, tenantId: String!): UpdateCustomerResponse
+  updateVat(input: UpdateVatInput!, tenantId: String!): UpdateVatResponse
+  upgradeSubscription(input: UpgradeSubscriptionInput!, tenantId: String!): UpgradeSubscriptionResponse!
+}
+
+type Plan {
+  amount: Int!
+  claims: [Claim!]
+  currency: String!
+  description: String
+  isFree: Boolean!
+  name: String!
+  planId: String!
+  tier: Tier!
+}
+
+type Query {
+  hasAnyRoles(roles: [Role!]!, tenantId: String!): Boolean
+  hasRole(role: Role!, tenantId: String!): Boolean
+  invoices(input: InvoicePaginationInput, tenantId: String!): [Invoice!]
+  me: User
+  plans: [Plan!]
+  tenant(tenantId: String!): Tenant
+  tenants: [Tenant!]
+  todos(limit: Int! = 20, offset: Int! = 0): [Todo]
+  usersByEmail(email: String!): [User!]
+}
+
+enum Role {
+  ADMIN
+  OPERATOR
+  VIEWER
+}
+
+type StripeAddress {
+  city: String!
+  country: String!
+  line1: String!
+  line2: String!
+  postal_code: String!
+}
+
+type StripeBillingDetails {
+  address: StripeAddress
+  email: String!
+  name: String!
+  phone: String!
+}
+
+type StripeCustomer {
+  email: String
+  id: String!
+  name: String
+  taxIds: [TaxId!]
+}
+
+type StripePaymentMethod {
+  cardBrand: String!
+  cardType: String!
+  country: String!
+  details: StripeBillingDetails!
+  last4: String!
+}
+
+type StripeSubscription {
+  canceledAt: Time
+  currentPeriodEnd: Time
+  currentPeriodStart: Time
+  customer: StripeCustomer!
+  id: String!
+  invoices: [Invoice!]
+  nextInvoice: Invoice
+  nextPendingInvoiceItemInvoice: Time
+  paymentMethod: StripePaymentMethod!
+  planId: String!
+  status: SubscriptionStatus!
+  tier: Tier!
+  trialEnd: Time
+  trialStart: Time
+}
+
+enum SubscriptionStatus {
+  active
+  all
+  canceled
+  incomplete
+  incomplete_expired
+  past_due
+  trialing
+  unpaid
+}
+
+type TaxId {
+  country: String!
+  type: VatType!
+  value: String!
+}
+
+type Tenant {
+  customer: StripeCustomer
+  id: String!
+  name: String!
+  slug: String!
+  subscription: StripeSubscription
+  users(type: TenantUserType): [TenantUser!]
+}
+
+input TenantInput {
+  name: String!
+}
+
+type TenantResponse {
+  errors: [Error!]
+  tenant: Tenant
+}
+
+type TenantUser {
+  createdAt: Time!
+  email: String
+  id: String!
+  name: String
+  role: Role!
+  type: TenantUserType!
+  updatedAt: Time!
+  userId: String!
+}
+
+enum TenantUserType {
+  API_KEY
+  NORMAL
+}
+
+enum Tier {
+  ENTERPRISE
+  FREELANCER
+  HOBBY
+  STARTUP
+}
+
+scalar Time
+
+"""This is a description of a Todo"""
+type Todo {
+  id: String!
+  status: TodoStatus!
+  text: String!
+}
+
+enum TodoStatus {
+  COMPLETED
+  PENDING
+}
+
+input UpdateCustomerInput {
+  email: String!
+  name: String!
+}
+
+type UpdateCustomerResponse {
+  errors: [Error!]
+}
+
+input UpdateVatInput {
+  vatNumber: String!
+  vatType: VatType!
+}
+
+type UpdateVatResponse {
+  errors: [Error!]
+}
+
+input UpgradeSubscriptionInput {
+  tier: Tier!
+}
+
+type UpgradeSubscriptionResponse {
+  errors: [Error!]
+}
+
+type User {
+  attrs: [UserAttribute!]
+  email: String!
+  id: String!
+}
+
+type UserAttribute {
+  key: String!
+  value: String!
+}
+
+scalar UUID
+
+enum VatType {
+  ae_trn
+  au_abn
+  br_cnpj
+  br_cpf
+  ca_bn
+  ca_gst_hst
+  ca_pst_bc
+  ca_pst_mb
+  ca_pst_sk
+  ca_qst
+  ch_vat
+  cl_tin
+  es_cif
+  eu_vat
+  gb_vat
+  hk_br
+  id_npwp
+  il_vat
+  in_gst
+  jp_cn
+  jp_rn
+  kr_brn
+  li_uid
+  mx_rfc
+  my_frp
+  my_itn
+  my_sst
+  no_vat
+  nz_gst
+  ru_inn
+  ru_kpp
+  sa_vat
+  sg_gst
+  sg_uen
+  th_vat
+  tw_vat
+  us_ein
+  za_vat
+}
+

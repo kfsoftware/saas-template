@@ -1,0 +1,14 @@
+query GetPlans {
+  plans {
+    description
+    name
+    claims {
+      text
+    }
+    planId
+    amount
+    currency
+    isFree
+    tier
+  }
+}

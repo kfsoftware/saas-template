@@ -1,0 +1,13 @@
+schema: ./schema.graphql
+documents: ./operations/*.graphql
+extensions:
+  codegen:
+    generates:
+      ./operations/index.ts:
+        documents:
+          - ./operations/**/*.graphql
+        plugins:
+          - typescript
+          - typescript-resolvers
+          - typescript-operations
+          - typescript-react-apollo

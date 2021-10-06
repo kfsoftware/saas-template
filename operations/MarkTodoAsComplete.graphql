@@ -1,0 +1,7 @@
+mutation markTodoAsComplete($id: String!) {
+  markTodoAsComplete(id: $id) {
+    id
+    status
+    text
+  }
+}
